@@ -46,11 +46,14 @@ jobs:
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build --no-daemon
         env:
+          GRADLE_OPTS: -Xmx2g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           REPO_OWNER: ${{ secrets.REPO_OWNER }}
           REPO_NAME: ${{ secrets.REPO_NAME }}
+          GRADLE_CACHE_USER: ${{ secrets.GRADLE_CACHE_USER }}
+          GRADLE_CACHE_PASSWORD: ${{ secrets.GRADLE_CACHE_PASSWORD }}
 
   docs:
     runs-on: ubuntu-latest
@@ -84,7 +87,11 @@ jobs:
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
 
       - name: Build Docs with Gradle
-        run: ./gradlew dokkaHtml
+        run: ./gradlew dokkaHtml --no-daemon
+        env:
+          GRADLE_OPTS: -Xmx2g -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
+          GRADLE_CACHE_USER: ${{ secrets.GRADLE_CACHE_USER }}
+          GRADLE_CACHE_PASSWORD: ${{ secrets.GRADLE_CACHE_PASSWORD }}
 
       - name: Deploy Docs to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@4.1.4
